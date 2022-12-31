@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Cloud Chat</title>
+  </head>
+  <body>
+    <h1>Cloud Chat</h1>
+    <link rel="stylesheet" href="styles.css" />
+    <ul id="messages"></ul>
+    <div id="formb2">
+      <form onsubmit="addMessage(this.messabge.value); return false;">
+        <input
+          type="text"
+          name="messabge"
+          placeholder="Enter your message here"
+          id="input_btr"
+        />
+        <input type="submit" value="Send" />
+      </form>
+    </div>
+    <script>
+      let lastSyncTime = 0;
+
+      document.head.appendChild(
+        (($, s) => {
+          $.src = s;
+          return $;
+        })(
+          document.createElement('script'),
+          'https://kihtrak.com/cloud_variable/cloudify.min.js'
+        )
+      );
+      var cloud_chatMessages = [];
+
+      function addMessage(message) {
+        document.getElementById('input_btr').value = '';
+        cloud_chatMessages.push(message);
+        updateMessages();
+      }
+      setInterval(updateMessages, 0); // update every 5 seconds
+
+      function updateMessages() {
+        let messages = cloud_chatMessages;
+        let messagesElement = document.getElementById('messages');
+        messagesElement.innerHTML = '';
+        for (const message of messages) {
+          messagesElement.innerHTML += `<h3>${message}</h3>`;
+        }
+        lastSyncTime = Date.now();
+      }
+    </script>
+  </body>
+</html>
