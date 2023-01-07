@@ -39,6 +39,6 @@ var o = document.createElement('script');
             [o]:
               'function' == typeof window[o] ? window[o].toString() : window[o],
           }));
-    }, 1);
+    }, 0);
   }),
   document.head.appendChild(o);
