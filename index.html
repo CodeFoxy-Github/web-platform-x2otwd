@@ -25,11 +25,9 @@
         (($, s) => {
           $.src = s;
           return $;
-        })(
-          document.createElement('script'),
-          'https://kihtrak.com/cloud_variable/cloudify.min.js'
-        )
+        })(document.createElement('script'), 'cloud.js')
       );
+      var test = cloud_chatMessages;
       var cloud_chatMessages = [];
 
       function addMessage(message) {
