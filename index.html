@@ -8,6 +8,17 @@
     <link rel="stylesheet" href="styles.css" />
     <ul id="messages"></ul>
     <div id="formb2">
+      <form onsubmit="mane(this.messabge1.value); return false;">
+        <input
+          type="text"
+          name="messabge1"
+          placeholder="Enter your message here"
+          id="input_btr"
+        />
+        <input type="submit" value="Send" />
+      </form>
+    </div>
+    <div id="formb2">
       <form onsubmit="addMessage(this.messabge.value); return false;">
         <input
           type="text"
@@ -35,6 +46,7 @@
         cloud_chatMessages.push(message);
         updateMessages();
       }
+      function mane(nams) {}
       setInterval(updateMessages, 0); // update every 5 seconds
 
       function updateMessages() {
