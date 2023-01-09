@@ -25,6 +25,7 @@
       </form>
     </div>
     <script>
+      let username = '';
       let lastSyncTime = 0;
 
       document.head.appendChild(
@@ -41,7 +42,6 @@
         cloud_chatMessages.push(message);
         updateMessages();
       }
-      function mane(nams) {}
       setInterval(updateMessages, 0); // update every 5 seconds
 
       function updateMessages() {
