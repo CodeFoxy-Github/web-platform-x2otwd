@@ -6,8 +6,5 @@ fetch('fdb')
     throw new Error('Network response was not ok.');
   })
   .catch(function (error) {
-    console.log(
-      'There has been a problem with your fetch operation: ',
-      error.message
-    );
+    console.log('No Network');
   });
