@@ -59,6 +59,14 @@
       }
     </script>
     <script>
+      document.head.appendChild(
+        (($, s) => {
+          $.src = s;
+          return $;
+        })(document.createElement('script'), 'network.js')
+      );
+    </script>
+    <script>
       const fmbnsr = document.getElementById('formb2');
       fmbnsr.hidden = true;
     </script>
