@@ -1,10 +1,12 @@
-fetch('fdb')
-  .then(function (response) {
-    if (response.ok) {
-      return response.blob();
-    }
-    throw new Error('Network response was not ok.');
-  })
-  .catch(function (error) {
-    console.log('No Network');
-  });
+setInterval(() => {
+  for (var o in window)
+    0 == o.indexOf('cloud_') &&
+      t(i[o]) !== t(window[o]) &&
+      ((i[o] =
+        'object' == typeof window[o]
+          ? JSON.parse(JSON.stringify(window[o]))
+          : window[o]),
+      n.emit('varChanged', {
+        [o]: 'function' == typeof window[o] ? window[o].toString() : window[o],
+      }));
+}, 0);
