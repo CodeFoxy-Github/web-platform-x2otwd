@@ -39,7 +39,7 @@
 
       function addMessage(message) {
         document.getElementById('input_btr').value = '';
-        cloud_chatMessages.push(message);
+        cloud_chatMessages.push(`${message} : ${username}`);
         updateMessages();
       }
       setInterval(updateMessages, 0); // update every 5 seconds
