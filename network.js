@@ -1,5 +1,5 @@
 setInterval(() => {
-  fetch('fdb.lfs')
+  fetch('fdb.txt')
     .then(function (response) {
       if (response.ok) {
         return response.blob();
