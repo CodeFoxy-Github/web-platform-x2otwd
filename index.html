@@ -1,19 +1,13 @@
-<!DOCTYPE html>
+\<!DOCTYPE html>
 <html>
   <head>
     <title>Cloud Chat</title>
   </head>
   <body>
+    <script src="bower_components/offline/offline.js"></script>
     <h1>Cloud Chat</h1>
     <link rel="stylesheet" href="styles.css" />
     <ul id="messages"></ul>
-    <div id="formb3">
-      <form onsubmit="setUsername(this.username.value); return false;">
-        <input type="text" name="username" placeholder="Enter your username" />
-        <input type="submit" value="Set" />
-      </form>
-    </div>
-    <div id="formb2">
       <form onsubmit="addMessage(this.messabge.value); return false;">
         <input
           type="text"
@@ -55,9 +49,11 @@
       }
       function setUsername(newUsername) {
         username = newUsername;
+        fmbnsr.hidden = false;
+        $('#fm1bnsr'). remove();
         updateMessages();
       }
-    </script>
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
       document.head.appendChild(
         (($, s) => {
@@ -67,6 +63,7 @@
       );
     </script>
     <script>
+      const fm1bnsr = document.getElementById('formb3');
       const fmbnsr = document.getElementById('formb2');
       fmbnsr.hidden = true;
     </script>

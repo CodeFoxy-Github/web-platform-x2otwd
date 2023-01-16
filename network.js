@@ -1,12 +1,20 @@
-setInterval(() => {
-  fetch('fdb.js')
-    .then(function (response) {
-      if (response.ok) {
-        return response.blob();
-      }
-      throw new Error('Network response was not ok.');
-    })
-    .catch(function (error) {
-      console.log('No Network');
+
+    $(function(){
+
+        var 
+            $online = $('.online'),
+            $offline = $('.offline');
+
+        Offline.on('confirmed-down', function () {
+            $online.fadeOut(function () {
+                $offline.fadeIn();
+            });
+        });
+
+        Offline.on('confirmed-up', function () {
+            $offline.fadeOut(function () {
+                $online.fadeIn();
+            });
+        });
+
     });
-}, 0);
