@@ -1,13 +1,23 @@
-\<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <title>Cloud Chat</title>
   </head>
-  <body>
-    <script src="bower_components/offline/offline.js"></script>
-    <h1>Cloud Chat</h1>
+  <body>    <h1>Cloud Chat</h1>
     <link rel="stylesheet" href="styles.css" />
     <ul id="messages"></ul>
+    <div id="formb3">
+      <form onsubmit="setUsername(this.name.value); return false;">
+        <input
+          type="text"
+          name="name"
+          placeholder="Enter your Username"
+          id="input_btr"
+        />
+        <input type="submit" value="Start" />
+      </form>
+    </div>
+    <div id="formb2">
       <form onsubmit="addMessage(this.messabge.value); return false;">
         <input
           type="text"
@@ -33,7 +43,7 @@
 
       function addMessage(message) {
         document.getElementById('input_btr').value = '';
-        cloud_chatMessages.push(`${message} : ${username}`);
+        cloud_chatMessages.push(`${username} : ${message}`);
         updateMessages();
       }
       setInterval(updateMessages, 0); // update every 5 seconds
@@ -50,22 +60,17 @@
       function setUsername(newUsername) {
         username = newUsername;
         fmbnsr.hidden = false;
-        $('#fm1bnsr'). remove();
+        $("#formb3").remove();
         updateMessages();
+        checkadmin();
       }
+      
+
     </script><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script>
-      document.head.appendChild(
-        (($, s) => {
-          $.src = s;
-          return $;
-        })(document.createElement('script'), 'network.js')
-      );
-    </script>
-    <script>
+       <script>
       const fm1bnsr = document.getElementById('formb3');
       const fmbnsr = document.getElementById('formb2');
       fmbnsr.hidden = true;
-    </script>
+    </script>  
   </body>
 </html>
