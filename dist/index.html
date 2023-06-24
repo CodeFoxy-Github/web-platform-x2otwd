@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Cloud Chat</title>
+  <style>.upload-container {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  align-items: center;
+  gap: 10px;
+  max-width: 400px;
+  padding: 20px;
+  display: flex;
+}
+
+.upload-container img {
+  width: 40px;
+  height: 40px;
+}
+
+.upload-container .file-info {
+  flex-direction: column;
+  gap: 5px;
+  display: flex;
+}
+
+.upload-container .file-info .file-name {
+  font-weight: bold;
+}
+
+.upload-container .file-info .file-size {
+  color: #777;
+  font-size: 14px;
+}
+
+.upload-container .download-button {
+  color: #fff;
+  text-align: center;
+  cursor: pointer;
+  background-color: #4caf50;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 14px;
+  text-decoration: none;
+  display: inline-block;
+}
+
+</style>
+</head>
+<body>
+  <h1>Cloud Chat</h1>
+  <ul id="messages"></ul>
+  <div id="formb3">
+    <form onsubmit="setUsername(event);">
+      <input type="text" name="name" placeholder="Enter your Username" id="input_btr">
+      <input type="submit" value="Start">
+    </form>
+  </div>
+  <div id="formb2">
+    <form onsubmit="addMessage(event);">
+      <input type="text" name="message" placeholder="Enter message here" id="input_btr">
+      <input type="file" id="file-input">
+      <input type="submit" value="Send">
+    </form>
+  </div>
+  <script>document.head.appendChild((($, s)=>{
+    $.src = s;
+    return $;
+})(document.createElement("script"), "cloud.js"));
+let username = localStorage.getItem("username") || "";
+// Load chat messages and username from localStorage on page load
+window.addEventListener("load", ()=>{
+    const savedUsername = localStorage.getItem("username");
+    if (savedUsername) {
+        username = savedUsername;
+        const nameInput = document.getElementById("input_btr");
+        nameInput.value = username;
+        const formb3 = document.getElementById("formb3");
+        const formb2 = document.getElementById("formb2");
+        formb2.hidden = false;
+        formb3.hidden = false;
+        formb3.remove();
+    }
+    updateMessages();
+});
+let lastSyncTime = 0;
+let cloud_chatMessages = JSON.parse(localStorage.getItem("cloud_chatMessages")) || [];
+const uploadUrl = "https://uploaddata.codefoxy.cf/upload";
+const downloadBaseUrl = "https://uploaddata.codefoxy.cf/download/";
+const fileInput = document.getElementById("file-input");
+function uploadFile(event) {
+    event.preventDefault();
+    const file = fileInput.files[0];
+    if (file) {
+        const formData = new FormData();
+        formData.append("file", file);
+        fetch(uploadUrl, {
+            method: "POST",
+            body: formData
+        }).then((response)=>response.json()).then((data)=>{
+            // Add file message to chat
+            const message = createFileMessage(data.filename, file.name, file.size);
+            cloud_chatMessages.push(message);
+            updateMessages();
+            // Save chat messages to localStorage
+            saveChatMessages();
+        }).catch((error)=>{
+            console.error("Error uploading file:", error);
+        });
+    }
+}
+function createFileMessage(filename, originalName, size) {
+    const downloadUrl = downloadBaseUrl + filename;
+    const fileMessage = `
+        <div class="file-message">
+          <div class="file-info">
+            <div class="file-name">${originalName}</div>
+            <div class="file-size">${formatFileSize(size)}</div>
+          </div>
+          <a class="download-link" href="${downloadUrl}" target="_blank">Download</a>
+        </div>
+      `;
+    return fileMessage;
+}
+function formatFileSize(bytes) {
+    if (bytes === 0) return "0 Bytes";
+    const k = 1024;
+    const sizes = [
+        "Bytes",
+        "KB",
+        "MB",
+        "GB",
+        "TB"
+    ];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+}
+function addMessage(event) {
+    event.preventDefault();
+    const messageInput = event.target.elements.message;
+    const message = messageInput.value.trim();
+    const fileInput = document.getElementById("file-input");
+    const file = fileInput.files[0]; // Get the selected file
+    if (message !== "") {
+        // Sanitize the message by escaping HTML entities
+        const sanitizedMessage = htmlspecialchars(message);
+        messageInput.value = "";
+        cloud_chatMessages.push(`${username} : ${sanitizedMessage}`);
+        updateMessages();
+        // Upload the file
+        if (file) uploadFile(file);
+        // Save chat messages to localStorage
+        saveChatMessages();
+    }
+}
+function updateMessages() {
+    let messages = cloud_chatMessages;
+    let messagesElement = document.getElementById("messages");
+    messagesElement.innerHTML = "";
+    for (const message of messages)messagesElement.innerHTML += `<h3>${message}</h3>`;
+    lastSyncTime = Date.now();
+}
+function setUsername(event) {
+    event.preventDefault();
+    const nameInput = event.target.elements.name;
+    const newUsername = nameInput.value.trim();
+    if (newUsername !== "") {
+        username = newUsername;
+        nameInput.value = "";
+        // Save username to localStorage
+        localStorage.setItem("username", username);
+        const formb3 = document.getElementById("formb3");
+        const formb2 = document.getElementById("formb2");
+        formb2.hidden = false;
+        formb3.hidden = false;
+        formb3.remove();
+        updateMessages();
+    }
+}
+function saveChatMessages() {
+    localStorage.setItem("cloud_chatMessages", JSON.stringify(cloud_chatMessages));
+}
+// Load chat messages and username from localStorage on page load
+window.addEventListener("load", ()=>{
+    updateMessages();
+    if (username !== "") {
+        const formb3 = document.getElementById("formb3");
+        formb3.hidden = false;
+        formb3.remove();
+    }
+});
+// Save chat messages to localStorage before leaving the page
+window.addEventListener("beforeunload", ()=>{
+    saveChatMessages();
+});
+// Function to escape HTML entities
+function htmlspecialchars(str) {
+    var map = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+    };
+    return str.replace(/[&<>"']/g, function(m) {
+        return map[m];
+    });
+}
+
+</script><style src="styles.css">@import "https://fonts.googleapis.com/css2?family=Google+Sans&display=swap";
+@import "https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap";
+h1, h2, h3, h4, h5, h6 {
+  font-family: Quicksand, sans-serif;
+}
+
+:root {
+  --bg-color: #15181e;
+  --font-base: aliceblue;
+  --code-base: fuchsia;
+  --callout: lime;
+  --pre-base: #303235;
+}
+
+html, body {
+  background-color: var(--bg-color);
+  color: var(--font-base);
+  font-family: Quicksand, sans-serif;
+  font-size: 16px;
+}
+
+header {
+  font-family: Quicksand, sans-serif;
+}
+
+section {
+  padding: 1.2em 0 0;
+  font-family: Quicksand, sans-serif;
+}
+
+.logo {
+  width: 100px;
+  height: 100px;
+  font-family: Quicksand, sans-serif;
+}
+
+code {
+  color: var(--code-base);
+  font-family: Quicksand, sans-serif;
+}
+
+.callout {
+  color: var(--callout);
+  font-family: Quicksand, sans-serif;
+}
+
+pre {
+  color: var(--code-base);
+  background-color: #15181e;
+  padding: 10px;
+  font-family: Quicksand, sans-serif;
+}
+
+input {
+  color: #fff;
+  text-align: center;
+  background-color: #26282e;
+  border: none;
+  border-radius: 12px;
+  margin: 4px 2px;
+  padding: 10px;
+  font-family: Quicksand;
+  font-size: 16px;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.button {
+  color: #fff;
+  text-align: center;
+  background-color: #26282e;
+  border: none;
+  border-radius: 12px;
+  margin: 4px 2px;
+  padding: 10px;
+  font-family: Quicksand, sans-serif;
+  font-size: 16px;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.line-wobble {
+  --uib-size: 320px;
+  --uib-speed: 1.55s;
+  --uib-color: white;
+  --uib-line-weight: 5px;
+  height: var(--uib-line-weight);
+  width: var(--uib-size);
+  border-radius: calc(var(--uib-line-weight) / 2);
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  transform: translate3d(0, 0, 0);
+}
+
+.line-wobble:before {
+  content: "";
+  background-color: var(--uib-color);
+  opacity: .1;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.line-wobble:after {
+  content: "";
+  border-radius: calc(var(--uib-line-weight) / 2);
+  animation: wobble var(--uib-speed) ease-in-out infinite;
+  background-color: var(--uib-color);
+  width: 100%;
+  height: 100%;
+  transform: translateX(-90%);
+}
+
+@keyframes wobble {
+  0%, 100% {
+    transform: translateX(-90%);
+  }
+
+  50% {
+    transform: translateX(90%);
+  }
+}
+
+</style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script>const fm1bnsr = document.getElementById("formb3");
+const fmbnsr = document.getElementById("formb2");
+fmbnsr.hidden = true;
+
+</script>
+<script src="/web-platform-x2otwd.3464ddca.js"></script></body>
+</html>
