@@ -42,3 +42,40 @@ var o = document.createElement('script');
     }, 0);
   }),
   document.head.appendChild(o);
+let username = '';
+let lastSyncTime = 0;
+
+document.head.appendChild(
+  (($, s) => {
+    $.src = s;
+    return $;
+  })(document.createElement('script'), 'cloud.js')
+);
+var test = cloud_chatMessages;
+var cloud_chatMessages = [];
+
+function addMessage(message) {
+  document.getElementById('input_btr').value = '';
+  cloud_chatMessages.push(`${username} : ${message}`);
+  updateMessages();
+}
+setInterval(updateMessages, 0); // update every 5 seconds
+
+function updateMessages() {
+  let messages = cloud_chatMessages;
+  let messagesElement = document.getElementById('messages');
+  messagesElement.innerHTML = '';
+  for (const message of messages) {
+    messagesElement.innerHTML += `<h3>${message}</h3>`;
+  }
+  lastSyncTime = Date.now();
+}
+function setUsername(newUsername) {
+  username = newUsername;
+  fmbnsr.hidden = false;
+  $('#formb3').remove();
+  updateMessages();
+}
+const fm1bnsr = document.getElementById('formb3');
+const fmbnsr = document.getElementById('formb2');
+fmbnsr.hidden = true;
